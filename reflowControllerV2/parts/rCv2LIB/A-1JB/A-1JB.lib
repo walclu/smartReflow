@@ -1,0 +1,29 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#(c) SnapEDA 2016 (snapeda.com)
+#This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA) with Design Exception 1.0
+#
+# A-1JB
+#
+DEF A-1JB J 0 40 Y Y 1 L N
+F0 "J" -300 200 50 H V L BNN
+F1 "A-1JB" -301 -301 50 H V L BNN
+F2 "AMPHENOL_A-1JB" 0 0 50 H I L BNN
+F3 "" 0 0 50 H I L BNN
+F4 "Amphenol" 0 0 50 H I L BNN "MANUFACTURER"
+DRAW
+C 0 0 200 0 0 10 N
+C 0 0 100 0 0 0 N
+P 2 0 0 10 0 -200 0 -400 N
+P 2 0 0 10 0 -400 -100 -400 N
+P 2 0 0 10 0 -400 100 -400 N
+P 2 0 0 10 -25 -450 25 -450 N
+P 2 0 0 10 -50 -425 50 -425 N
+X SIGNAL SIGNAL 300 0 300 L 40 40 0 0 P 
+X GND GND1 0 -400 0 R 40 40 0 0 P 
+X GND GND2 0 -400 0 R 40 40 0 0 P 
+X GND OPTIONAL_GND 0 -400 0 R 40 40 0 0 P 
+ENDDRAW
+ENDDEF
+#
+# End Library

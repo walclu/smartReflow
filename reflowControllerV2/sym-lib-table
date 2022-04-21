@@ -1,0 +1,8 @@
+(sym_lib_table
+  (lib (name "rfcV2")(type "KiCad")(uri "${KIPRJMOD}/parts/rCv2LIB/rfcV2.kicad_sym")(options "")(descr ""))
+  (lib (name "TYPC")(type "KiCad")(uri "${KIPRJMOD}/parts/rCv2LIB/TYPC/TYPC.kicad_sym")(options "")(descr ""))
+  (lib (name "MY_FILTER")(type "KiCad")(uri "${KIPRJMOD}/parts/rCv2LIB/LFB182G45CGFD436/LFB182G45CGFD436.kicad_sym")(options "")(descr ""))
+  (lib (name "MY_ANT")(type "KiCad")(uri "${KIPRJMOD}/parts/rCv2LIB/2450AT14A0100T/2450AT14A0100T.kicad_sym")(options "")(descr ""))
+  (lib (name "MY_SW")(type "KiCad")(uri "${KIPRJMOD}/parts/rCv2LIB/B3F-4055/B3F-4055.kicad_sym")(options "")(descr ""))
+  (lib (name "MY_RF")(type "KiCad")(uri "${KIPRJMOD}/parts/rCv2LIB/A-1JB/A-1JB.kicad_sym")(options "")(descr ""))
+)
