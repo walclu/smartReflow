@@ -4903,6 +4903,10 @@
     (effects (font (size 1 1)) (justify right bottom))
     (uuid 741d768e-2a1b-406d-9c57-d7f6f624bdad)
   )
+  (label "5V_IN" (at 41.275 76.2 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 76cd5104-4a5e-4027-9e51-3c83fa702fef)
+  )
   (label "LPUART1_RX" (at 92.71 26.67 0)
     (effects (font (size 1 1)) (justify left bottom))
     (uuid 781e002e-2400-4b2d-93ba-baa41bb8e397)
@@ -4978,6 +4982,10 @@
   (label "USB1_D-" (at 50.165 41.275 0)
     (effects (font (size 1 1)) (justify left bottom))
     (uuid b5491cb8-8a55-4021-b300-0676c1a03892)
+  )
+  (label "VIN" (at 22.86 76.2 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid b81cf44b-8bab-49da-ba9e-458003fc0ef8)
   )
   (label "SWDIO" (at 184.15 35.56 0)
     (effects (font (size 1 1)) (justify left bottom))
@@ -6398,7 +6406,7 @@
   (symbol (lib_id "MY_RF:MLPF-WB55-01E3") (at 201.93 115.57 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 643f2197-ccbc-4f7b-901f-1f4a5e9d450f)
-    (property "Reference" "FILT1" (id 0) (at 202.2475 106.68 0)
+    (property "Reference" "F1" (id 0) (at 202.2475 106.68 0)
       (effects (font (size 1.524 1.524)))
     )
     (property "Value" "MLPF-WB55-01E3" (id 1) (at 202.2475 110.49 0)
@@ -6669,7 +6677,7 @@
     (property "Reference" "FB1" (id 0) (at 36.195 79.375 90)
       (effects (font (size 1 1)))
     )
-    (property "Value" "100O@100M" (id 1) (at 43.18 74.295 90)
+    (property "Value" "100O@100M" (id 1) (at 38.735 73.025 90)
       (effects (font (size 1 1)))
     )
     (property "Footprint" "Inductor_SMD:L_0603_1608Metric" (id 2) (at 36.83 77.978 90)
@@ -8604,14 +8612,14 @@
     (path "/1c9a0fcf-85f7-497c-896f-0ca45bba49e0"
       (reference "D3") (unit 1) (value "PSBD1DF40V1H") (footprint "Diode_SMD:D_SOD-123F")
     )
+    (path "/643f2197-ccbc-4f7b-901f-1f4a5e9d450f"
+      (reference "F1") (unit 1) (value "MLPF-WB55-01E3") (footprint "footprints:MLPF-WB55-01E3")
+    )
     (path "/770f6496-c0da-4632-90ab-b02a09611f0f"
       (reference "FB1") (unit 1) (value "100O@100M") (footprint "Inductor_SMD:L_0603_1608Metric")
     )
     (path "/ddc9291e-5a7e-43f2-bc43-3aa0663a987d"
       (reference "FB2") (unit 1) (value "FCM1608KF-601T03") (footprint "Inductor_SMD:L_0603_1608Metric")
-    )
-    (path "/643f2197-ccbc-4f7b-901f-1f4a5e9d450f"
-      (reference "FILT1") (unit 1) (value "MLPF-WB55-01E3") (footprint "footprints:MLPF-WB55-01E3")
     )
     (path "/8585d589-12e2-4e89-8feb-f60295a7430c"
       (reference "H1") (unit 1) (value "MH") (footprint "MountingHole:MountingHole_3.2mm_M3_Pad_Via")
