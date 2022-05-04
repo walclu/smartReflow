@@ -4,9 +4,8 @@ count = 1;
 fs = 2;
 dt = 1/(fs);
 
-rfo = rfo('COM11', 115200);
+rfo = rfo('COM10', 115200);
 rfo.cmd('start -p --nonleaded');
-
 yTarget = [];
 y = [];
 t = [];

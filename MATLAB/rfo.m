@@ -13,7 +13,7 @@ classdef rfo < handle
 
         function cmd(obj, str)
             for i = 1:length(str)
-                write(obj.dev, str(i), 'char');
+                write(obj.dev, str(i), 'char');     
             end
             write(obj.dev, 13, "int8");
         end
