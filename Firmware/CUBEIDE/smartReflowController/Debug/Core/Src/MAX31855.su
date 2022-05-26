@@ -1,0 +1,2 @@
+../Core/Src/MAX31855.c:11:6:MAX31855_init	24	static
+../Core/Src/MAX31855.c:21:7:MAX31855_read_celsius	16	static
