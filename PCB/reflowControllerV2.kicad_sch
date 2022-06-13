@@ -8,6 +8,8 @@
     (title "ReflowConrollerV2")
     (date "2022-04-21")
     (rev "2.0")
+    (company "lukas-walczak@web.de")
+    (comment 1 "STm32WB based toaster oven controller")
   )
 
   (lib_symbols
@@ -2408,7 +2410,6 @@
       )
     )
   )
-
 
   (junction (at 40.005 23.495) (diameter 0) (color 0 0 0 0)
     (uuid 006bdbc9-2524-4140-978e-a65df91f7651)
@@ -4930,6 +4931,10 @@
     (effects (font (size 1 1)) (justify right bottom))
     (uuid 9bda1103-015b-4c6d-84e6-e58b39296ef8)
   )
+  (label "USB_VBUS" (at 48.26 18.415 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 9f4b2713-e28b-4866-98f3-05924f0c3711)
+  )
   (label "T2_CS" (at 92.71 31.75 0)
     (effects (font (size 1 1)) (justify left bottom))
     (uuid a42843f0-4a8a-49e9-ad6c-f08433540b30)
@@ -5033,6 +5038,10 @@
   (label "T2-" (at 139.065 179.705 0)
     (effects (font (size 1 1)) (justify left bottom))
     (uuid e9744daf-67b7-4857-a50e-4f981154d515)
+  )
+  (label "USB_VBUS2" (at 58.42 99.695 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid ea13237a-761d-4212-96a0-9c70032acb40)
   )
   (label "SPI1_SCK" (at 137.16 172.085 180)
     (effects (font (size 1 1)) (justify right bottom))
