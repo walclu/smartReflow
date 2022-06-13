@@ -70,6 +70,7 @@ struct _rfo_t {
 	uint16_t pwmFreq;
 
 	uint8_t currentPage;
+	uint8_t currentMode;
 
 };
 typedef struct _rfo_t rfo_t;
@@ -115,6 +116,7 @@ enum _reflowStates_t
 	REFLOW_STATE_COOL,
 	REFLOW_STATE_COMPLETE,
 	REFLOW_STATE_TOO_HOT,
+	REFLOW_STATE_PLA,
 	REFLOW_STATES
 };
 
@@ -122,7 +124,16 @@ enum _dp_page_ids {
 	DP_LOADING,
 	DP_MAIN,
 	DP_SETTINGS,
+	DP_REFLOW,
+	DP_FILAMENT,
+	DP_MAINPLA,
 	DP_PAGES
+};
+
+enum _rfo_modes {
+	RFO_MODE_REFLOW,
+	RFO_MODE_PLA,
+	RFO_MODES
 };
 /* USER CODE END PTD */
 
@@ -158,6 +169,7 @@ enum _dp_page_ids {
 			(_dev)-> dutyCycle = _dutyCycle; \
 			(_dev)-> pwmFreq = _pwmFreq; \
 			(_dev)-> currentPage = DP_LOADING; \
+			(_dev)-> currentMode = RFO_MODE_REFLOW; \
 		} while(0)
 
 #define _RFO_FSM_INIT(_fsm) \
@@ -276,6 +288,16 @@ const float limMin 				=   	0;
 const float limMax 				=   	256;
 const float limMinInt 			=   	-60.0f;
 const float limMaxInt 			=   	60.0f;
+
+const float plaKp 					=		9.f;
+const float plaKi 					=		.0002f;
+const float plaKd 					=		2.2f;
+
+const float plaTemp = 45;
+const float plaDuration = 600;
+
+const int reflowARR = 256;
+const int plaARR = 512;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -376,8 +398,6 @@ int main(void)
 
 	HAL_UART_Receive(&huart1, dp->rcv, 50, 1000); // Resets UART buffers, so isr is not fired on boot
 	HAL_UART_Receive_IT(&huart1, dp->rcv, 4);
-
-	beep_IT(dev,2);
 	nextion_init(dp, &huart1);
 	char buf[100];
 
@@ -390,11 +410,11 @@ int main(void)
 	PIDController_Init(pid, kP, kI, kD, SAMPLE_TIME, tau, limMin, limMax, limMinInt, limMaxInt);
 
 	dp->write_id_val(dp, "j0", 100);
-	HAL_Delay(1000);
 
 	dp->write(dp, "page main");
 	dev->currentPage = DP_MAIN;
 	nextion_print_page(dp);
+	beep_IT(dev,2);
 
 
 	/* USER CODE END 2 */
@@ -433,6 +453,8 @@ int main(void)
 							break;
 						case 3:
 							beep_IT(dev, 3);
+							PIDController_Init(pid, kP, kI, kD, SAMPLE_TIME, tau, limMin, limMax, limMinInt, limMaxInt);
+							__HAL_TIM_SET_AUTORELOAD(&htim1, reflowARR);
 							fsm->state = RFO_START;
 							dp->write(dp, "page reflow");
 							dp->write_id_str(dp, "conState", "Connected");
@@ -877,7 +899,7 @@ static void MX_TIM1_Init(void)
 	htim1.Instance = TIM1;
 	htim1.Init.Prescaler = 250;
 	htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim1.Init.Period = 256;
+	htim1.Init.Period = 512;
 	htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim1.Init.RepetitionCounter = 0;
 	htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -1103,6 +1125,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			switch(dp->response.id) {
 			case 2: // id of start button
 				beep_IT(dev,3);
+				PIDController_Init(pid, kP, kI, kD, SAMPLE_TIME, tau, limMin, limMax, limMinInt, limMaxInt);
+				__HAL_TIM_SET_AUTORELOAD(&htim1, reflowARR);
 				dp->write(dp, "page reflow");
 				dp->write_id_str(dp, "conState", "Not connected");
 				dp->write_id_str(dp, "reflowState", "Prepare");
@@ -1127,6 +1151,28 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					dev->currentPage = DP_MAIN;
 					nextion_print_page(dp);
 					break;
+				case 3: // id of modeBT button
+					beep_IT(dev,1);
+					break;
+				case 5: // id of apply button
+					beep_IT(dev,2);
+					if(dp->response.data == RFO_MODE_REFLOW) {
+						PIDController_Init(pid, kP, kI, kD, SAMPLE_TIME, tau, limMin, limMax, limMinInt, limMaxInt);
+						__HAL_TIM_SET_AUTORELOAD(&htim1, reflowARR);
+						dp->write(dp, "page main");
+						dev->currentPage = DP_MAIN;
+						nextion_print_page(dp);
+					}
+					else if(dp->response.data == RFO_MODE_PLA) {
+						PIDController_Init(pid, plaKp, plaKi, plaKd, SAMPLE_TIME, tau, limMin, limMax, limMinInt, limMaxInt);
+						__HAL_TIM_SET_AUTORELOAD(&htim1, plaARR);
+						dp->write(dp, "page mainPLA");
+						dev->currentPage = DP_MAINPLA;
+						dev->targetTemp = plaTemp;
+						dp->write_id_float(dp, "plaTargetTemp", plaTemp);
+						dp->write_id_float(dp, "t2", plaDuration);
+					}
+					break;
 				}
 				break;
 
@@ -1146,6 +1192,45 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 						break;
 					}
 					break;
+					case DP_MAINPLA:
+						switch(dp->response.id) {
+						case 2: // id of start button
+							beep_IT(dev,3);
+							dp->write(dp, "page filament");
+							dp->write_id_str(dp, "temp", "0");
+							dp->write_id_str(dp, "dur", "0");
+							dp->write_id_val(dp, "j0", 0);
+							fsm->state = RFO_START;
+							dev->currentReflowState = REFLOW_STATE_PLA;
+							dev->print = true;
+							HAL_TIM_Base_Start_IT(&htim16);
+							break;
+						case 3: // id of settings button
+							beep_IT(dev,1);
+							dp->write(dp, "page setting");
+							dev->currentPage = DP_SETTINGS;
+							break;
+						}
+						break;
+						case 4:
+							switch(dp->response.id) {
+							case 4: // id of PLA abort button
+								beep_IT(dev,3);
+								HAL_TIM_Base_Stop_IT(&htim16);
+								dev->currentReflowState = REFLOW_STATE_IDLE;
+								fsm->state = RFO_IDLE;
+								dev->elaps = 0;
+								__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+								__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+								dp->write(dp, "page mainPLA");
+								dev->currentPage = DP_MAINPLA;
+								dp->write_id_float(dp, "plaTargetTemp", plaTemp);
+								dp->write_id_float(dp, "t2", plaDuration);
+								break;
+							}
+							break;
+							break;
+
 		}
 
 		HAL_UART_Receive_IT(&huart1, dp->rcv, 4);
@@ -1182,7 +1267,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 		switch(dev->currentReflowState){
 
-		case REFLOW_STATE_DEBUG:
+		case REFLOW_STATE_PLA:
+			dev->targetTemp = plaTemp;
+			dp->write_id_float(dp, "temp", tempSens->temp);
+			dp->write_id_float(dp, "pidVal", pid->out);
+
+			if(!(dev->elaps % 2)) {
+				int num = dev->elaps/2;
+				sprintf(dev->trm, "%d", num);
+				dp->write_id_str(dp, "dur", dev->trm);
+			}
+			if(dev->elaps == 28800) {
+				beep_IT(dev,3);
+				HAL_TIM_Base_Stop_IT(&htim16);
+				dev->currentReflowState = REFLOW_STATE_IDLE;
+				fsm->state = RFO_IDLE;
+				dev->elaps = 0;
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+				dp->write(dp, "page mainPLA");
+				dev->currentPage = DP_MAINPLA;
+				dp->write_id_float(dp, "plaTargetTemp", plaTemp);
+				dp->write_id_float(dp, "t2", plaDuration);
+				break;
+			}
+
 			break;
 
 		case REFLOW_STATE_IDLE:
@@ -1248,17 +1357,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			}
 			break;
 		case REFLOW_STATE_COOL:
-			dp->write_id_str(dp, "reflowState", "IDLE");
+			dp->write_id_str(dp, "reflowState", "COOL");
 			if(!(dev->elaps % 4) || dev->elaps == 1) {
 				dev->targetTemp = REFLOW_END_TEMP - (COOL_TEMP_DECREASE*SAMPLE_TIME)*dev->elaps;
 			}
 			if(dev->elaps == (float)COOL_DURATION/SAMPLE_TIME) {
-				beep_IT(dev,5);
+				HAL_TIM_Base_Stop_IT(&htim16);
 				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 				__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+				beep_IT(dev,5);
 				dev->currentReflowState = REFLOW_STATE_IDLE;
 				dev->elaps = 0;
-				HAL_TIM_Base_Stop_IT(&htim16);
 				dp->write(dp, "page main");
 				dev->currentPage = DP_MAIN;
 				nextion_print_page(dp);
@@ -1267,7 +1376,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 
 		}
-		if(dev->currentReflowState != REFLOW_STATE_IDLE) {
+		if(dev->currentReflowState != REFLOW_STATE_IDLE && dev->currentReflowState != REFLOW_STATE_PLA) {
 			dp->write_id_float(dp, "targetTemp", dev->targetTemp);
 			dp->write_id_float(dp, "currentTemp", dev->temp);
 			dp->write_id_float(dp, "tempDiff", dev->targetTemp-dev->temp);

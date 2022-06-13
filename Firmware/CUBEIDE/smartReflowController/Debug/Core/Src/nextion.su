@@ -3,5 +3,5 @@
 ../Core/Src/nextion.c:39:5:nextion_send_float_to_id	48	static
 ../Core/Src/nextion.c:53:5:write	24	static
 ../Core/Src/nextion.c:66:6:nextion_decode_response	16	static
-../Core/Src/nextion.c:76:6:nextion_print_page	16	static
-../Core/Src/nextion.c:100:5:nextion_init	16	static
+../Core/Src/nextion.c:83:6:nextion_print_page	16	static
+../Core/Src/nextion.c:107:5:nextion_init	16	static

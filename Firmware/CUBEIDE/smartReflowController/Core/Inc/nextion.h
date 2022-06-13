@@ -25,6 +25,7 @@ typedef struct {
 
 	unsigned char page;
 	unsigned char id;
+	unsigned char data;
 
 } nextion_response_t;
 

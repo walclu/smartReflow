@@ -69,6 +69,13 @@ void nextion_decode_response(nextion_t* dp) {
 
 		dp->response.page = dp->rcv[1];
 		dp->response.id = dp->rcv[2];
+		dp->response.data = 0;
+
+	}
+	else if(dp->rcv[0] == '$' && dp->rcv[1] == 2 && dp->rcv[2] == 5) {
+		dp->response.page = dp->rcv[1];
+		dp->response.id = dp->rcv[2];
+		dp->response.data = dp->rcv[3];
 	}
 
 }
