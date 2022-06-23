@@ -14,4 +14,10 @@ The smartReflowV2 is a STm32WB55 based toaster oven reflow controller for reflow
 - EEPROM for storing custom profiles
 - PLA drying mode
 
+## Assembly
+The PCB was made by JLCPCB and assembled by hand.
 ![alt text](Pictures/PCB/PCB4.png "Assembled PCB")
+
+## Results
+![alt text](Pictures/Results/MatlabData.png "matlab")
+![alt text](Pictures/Results/Soldering1.png "qfn soldering")
