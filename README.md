@@ -7,7 +7,8 @@ The smartReflowV2 is a STm32WB55 based toaster oven reflow controller for reflow
 - 2 SSR outputs
 - 2 cooling fan outputs
 - 2 MAX31855 temperature ADCs
-- Touch screen
+- Buzzer
+- Touch screen (Nextion 2.4" UART Display)
 - Bluetooth low energy, onboard chip antenna with matching
 - 2 virtual com ports 
 - MATLAB data streaming
