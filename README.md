@@ -20,4 +20,4 @@ The PCB was made by JLCPCB and assembled by hand.
 
 ## Results
 ![alt text](Pictures/Results/MatlabData.png "matlab")
-![alt text](Pictures/Results/Soldering1.png "qfn soldering")
+![alt text](Pictures/Results/Soldering2.png "qfn soldering")
